@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,51 +11,44 @@ namespace WebCore.Services.Implementacao
 {
     public class BlogService : IBlogService
     {
-        // CRUD
+        private readonly ApplicationDbContext _context;
 
-        Microsoft.EntityFrameworkCore.DbContextOptions<ApplicationDbContext> options = new Microsoft.EntityFrameworkCore.DbContextOptions<ApplicationDbContext>();
+        public BlogService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // CRUD
 
         public void Salvar(Blog blog)
         {
-            using (var db = new ApplicationDbContext(options))
+            if (blog.ID > 0)
             {
-                if (blog.ID > 0)
-                {
-                    db.Blog.Attach(blog);
-                    db.Entry(blog).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                }
-                else 
-                    db.Blog.Add(blog);
-
-                db.SaveChanges();
+                _context.Blog.Attach(blog);
+                _context.Entry(blog).State = EntityState.Modified;
             }
+            else
+                _context.Blog.Add(blog);
+
+            _context.SaveChanges();
         }
 
         public Blog Obter(int id)
         {
-            using (var db = new ApplicationDbContext(options))
-            {
-                return db.Blog.Where(b => b.ID == id).FirstOrDefault();
-            }
+            return _context.Blog.Where(b => b.ID == id).FirstOrDefault();
         }
 
         public IEnumerable<Blog> Listar()
         {
-            using (var db = new ApplicationDbContext(options))
-            {
-                return db.Blog.ToList();
-            }
+            return _context.Blog.ToList();
         }
 
         public void Deletar(int id)
         {
-            using (var db = new ApplicationDbContext(options))
-            {
-                var b = new Blog() { ID = id };
-                db.Blog.Attach(b);
-                db.Blog.Remove(b);
-                db.SaveChanges();
-            }
+            var b = new Blog() { ID = id };
+            _context.Blog.Attach(b);
+            _context.Blog.Remove(b);
+            _context.SaveChanges();
         }
     }
 }

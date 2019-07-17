@@ -7,22 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebCore.Data;
 using WebCore.Models.ManageBlog;
+using WebCore.Services.Especificacao;
+using WebCore.Services.Implementacao;
 
 namespace WebCore.Controllers
 {
     public class BlogController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBlogService _blog;
 
-        public BlogController(ApplicationDbContext context)
+        public BlogController(ApplicationDbContext context, IBlogService blog)
         {
             _context = context;
+            _blog = blog;
         }
 
         // GET: Blog
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(await _context.Blog.ToListAsync());
+        //}
+        //public IActionResult Index()
+        //{
+        //    BlogService srv = new BlogService(_context);
+        //    return View(srv.Listar());
+        //}
+        public IActionResult Index()
         {
-            return View(await _context.Blog.ToListAsync());
+            return View(_blog.Listar());
         }
 
         // GET: Blog/Details/5
@@ -52,14 +65,25 @@ namespace WebCore.Controllers
         // POST: Blog/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("ID,Tilulo,Resumo,Url,Autor")] Blog blog)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(blog);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(blog);
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Tilulo,Resumo,Url,Autor")] Blog blog)
+        public IActionResult Create([Bind("ID,Tilulo,Resumo,Url,Autor")] Blog blog)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
+                _blog.Salvar(blog);
                 return RedirectToAction(nameof(Index));
             }
             return View(blog);
