@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using WebCore.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebCore.Services.Especificacao;
+using WebCore.Services.Implementacao;
 
 namespace WebCore
 {
@@ -41,6 +43,8 @@ namespace WebCore
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<IBlogService, BlogService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

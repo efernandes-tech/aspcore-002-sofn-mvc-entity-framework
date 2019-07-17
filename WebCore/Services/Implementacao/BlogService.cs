@@ -35,7 +35,7 @@ namespace WebCore.Services.Implementacao
 
         public Blog Obter(int id)
         {
-            return _context.Blog.Where(b => b.ID == id).FirstOrDefault();
+            return _context.Blog.SingleOrDefault(b => b.ID == id);
         }
 
         public IEnumerable<Blog> Listar()
